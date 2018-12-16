@@ -2,14 +2,25 @@ import hashlib
 import datetime, time
 import random
 
+def proofOfWork(Hash ,lastProof):
+    """
+    Naive proofOfWork function for closing old block
+    """
+    iterator = 1
+    while not(iterator % 3 == 0 and Hash % iterator > 7653667):
+        iterator+=1
+
+    return iterator
+
 class PyBlock:
 
-    def __init__(self,prevHash):
+    def __init__(self,prevHash, proofOfWork):
 
         self.prevHash = prevHash
 
         self.timeStamp = str(datetime.datetime.now())
         self.transactionData = []
+        self.proofOfWork =  proofOfWork
         self.__hashBlock__()
 
 
@@ -34,7 +45,7 @@ class PyBlock:
             previous hash
         Every element is byte object (Big Endian)
         """
-        hash = hashlib.sha512()
+        hash = hashlib.sha256()
 
         timeStampBytes = self.timeStamp.encode('utf-8')
         prevHashBytes = (str(hex(self.prevHash))).encode('utf-8')
@@ -55,4 +66,3 @@ class PyBlock:
         size = len(self.transactionData)
         if size == 100:
             self.__hashBlock__()
-            return self.__init__(self.hash)
