@@ -6,8 +6,8 @@ def proofOfWork(Hash ,lastProof):
     """
     Naive proofOfWork function for closing old block
     """
-    iterator = 1
-    while not(iterator % 3 == 0 and Hash % iterator > 7653667):
+    iterator = lastProof + 1
+    while not(int(Hash/(2^128)) % iterator == 0 and iterator%23 == 0):
         iterator+=1
 
     return iterator
@@ -32,7 +32,7 @@ class PyBlock:
         """
         tmp = '|'
         for transaction in self.transactionData:
-            tmp += transaction[0] + "->" + transaction[1] + "({amount})|".format(amount = transaction[3])
+            tmp += transaction[0] + "->" + transaction[1] + "({amount})|".format(amount = transaction[2])
 
         return tmp.encode('utf=8')
 
@@ -61,8 +61,8 @@ class PyBlock:
         Every record is immutable tuple type saved in 'transactionData' list## IDEA: vector
         If size of list reached 100 new block is created (post transaction checking)
         """
-
-        self.transactionData += (sender, receiver, amount)
+        tuple = (sender, receiver, amount)
+        self.transactionData.append(tuple)
         size = len(self.transactionData)
         if size == 100:
             self.__hashBlock__()
